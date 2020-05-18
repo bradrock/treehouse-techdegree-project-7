@@ -7,11 +7,6 @@ import './App.css';
 //import NotFound from 'not_found';
 //import Nav from 'nav';
 import ReactDOM from 'react-dom';
-import {Router, Route} from 'react-router';
-import {BrowserRouter, Switch} from 'react-router-dom';
-import apiKey from './config';
-
-
 
 
 /*import { Route, Switch } from "react-router";
@@ -34,26 +29,15 @@ let routes = (
 );
 */
 
-
-
-
 function Nav() {
   return (<nav className="main-nav">
   <ul>
-    <li><a href='/guitar'>Guitar</a></li>
-    <li><a href='/piano'>Piano</a></li>
-    <li><a href='/trumpet'>Trumpet</a></li>
+    <li><a href='#'>Baseball</a></li>
+    <li><a href='#'>Volleyball</a></li>
+    <li><a href='#'>Roller Coasters</a></li>
   </ul>
 </nav>);
 }
-
-/*
-const ImageList = props => {
-
-  return 
-
-
-}*/
 
 
 function NotFound() {
@@ -65,7 +49,7 @@ function NotFound() {
 
 function Photo(props) {
   return (<li>
-  <img src={props.url} alt="" />
+  <img src={props.img_src} alt="" />
 </li>);
 }
 
@@ -89,92 +73,42 @@ class Form extends React.Component {
 }
 
 
-/*class PhotoContainer extends React.Component {
-  constructor(props) {
+class PhotoContainer extends React.Component {
+  constructor() {
     super();
     //this.state = {color: "red"};
-    const results = props.data;
-    let imgs = results.map(img =>
-      {
-        <Photo url={'https://www.flickr.com/photos/' + img.owner + '/' + img.id + '/'} />
-      }
-    );
   }
   render() {
     return (<div class="photo-container">
     <h2>Results</h2>
-    {images}
     <ul><NotFound /></ul>
     </div>);
   }
-}*/
+}
 //export default Nav;
 
-
-const PhotoContainer = props => {
-  const results = props.data;
-    let images = results.map(img =>
-      
-        <Photo url={'https://farm' + img.farm + '.staticflickr.com/' + img.server + '/' + img.id + '_' + img.secret + '.jpg'} key={img.id} />
-      
-    );
-
-    return (
-    <div className="photo-container">
-    <h2>Results</h2>
-    <ul>{images}<NotFound /></ul>
-    </div>
-    );
-}
-
-/*
-function GuitarPhotoContainer()
-{
-  return (<PhotoContainer data={this.state.guitarImages} />);
-}
-*/
 
 export default class App extends React.Component {
   constructor(){
     super();
-    this.state = { guitarImages: [], pianoImages: [], trumpetImages: [], searchImages: [] };
+    this.state = { images: [] };
 
   }
 
   componentDidMount(){
-    fetch('https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=' + apiKey + '&tags=guitar&safe_search=1&is_getty=true&per_page=24&format=json&nojsoncallback=1')
+    fetch('https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=64c159490b6d7f4b750802422b4ae401&tags=baseball&per_page=&format=json&nojsoncallback=1')
     .then(response => response.json())
     .then(responseData => {
-      this.setState({guitarImages: responseData.photos.photo});
+      this.setState({images: responseData.photos});
     })
     .catch(error => {
       console.log('Error fetching and parsing data', error);
     });
-
-    fetch('https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=' + apiKey + '&tags=piano&safe_search=1&is_getty=true&per_page=24&format=json&nojsoncallback=1')
-    .then(response2 => response2.json())
-    .then(responseData2 => {
-      this.setState({pianoImages: responseData2.photos.photo});
-    })
-    .catch(error => {
-      console.log('Error fetching and parsing data', error);
-    });
-
-    fetch('https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=' + apiKey + '&tags=trumpet&sort=relevance&safe_search=1&is_getty=true&per_page=24&format=json&nojsoncallback=1')
-    .then(response3 => response3.json())
-    .then(responseData3 => {
-      this.setState({trumpetImages: responseData3.photos.photo});
-    })
-    .catch(error => {
-      console.log('Error fetching and parsing data', error);
-    });
-
-    
       
   }
   
   render() {
-    //console.log(this.state.pianoImages);
+    console.log(this.state.images);
     return (
       /*<div className="App">
         <header className="App-header">
@@ -193,66 +127,16 @@ export default class App extends React.Component {
         </header>
       </div>*/
 
-      
-      
-
-        
-      <BrowserRouter>
-        <div className="container">
-
-
-          <Form />
-          <Nav />
-       
-        <Switch>
-          <Route path="/guitar" render={(props) => <PhotoContainer {...props} data={this.state.guitarImages} />} />
-          <Route path="/piano" render={(props) => <PhotoContainer {...props} data={this.state.pianoImages} />} />
-          <Route path="/trumpet" render={(props) => <PhotoContainer {...props} data={this.state.trumpetImages} />} />
-          <Route path="/search/:term" render={(props) => 
-              {
-                fetch('https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=' + apiKey + '&tags=' + props.match.params.term +'&sort=relevance&safe_search=1&is_getty=true&per_page=24&format=json&nojsoncallback=1')
-                  .then(response4 => response4.json())
-                  .then(responseData4 => {
-                    this.setState({searchImages: responseData4.photos.photo});
-                    })
-                  .catch(error => {
-                    console.log('Error fetching and parsing data', error);
-                    });
-
-                return <PhotoContainer {...props} data={this.state.searchImages} />;
-              }
-            } 
-           />
-          
-        </Switch>
-        </div>
-      </BrowserRouter>
+      <div>
+        <Form />
+        <Nav />
+        <PhotoContainer />
+      </div>
     );
   }
 }
 
 
-/*
-
-<PhotoContainer data={this.state.guitarImages} />
-
-<BroswerRouter>
-<Switch>
-<Route exact path="/">
-  <Home />
-</Route>
-<Route path="/about">
-  <About />
-</Route>
-<Route path="/:user">
-  <User />
-</Route>
-<Route>
-  <NoMatch />
-</Route>
-</Switch>
-</BroswerRouter>
-*/
 
 
 //export default App;
