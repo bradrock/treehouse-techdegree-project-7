@@ -1,42 +1,12 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-//import Photo from 'photo';
-//import Form from 'form';
-//import PhotoContainer from 'photo_container';
-//import NotFound from 'not_found';
-//import Nav from 'nav';
 import ReactDOM from 'react-dom';
 import {Router, Route} from 'react-router';
 import {BrowserRouter, Switch} from 'react-router-dom';
 import apiKey from './config';
 
 
-
-
-/*import { Route, Switch } from "react-router";
-
-let routes = (
-  <Switch>
-    <Route exact path="/">
-      <Home />
-    </Route>
-    <Route path="/about">
-      <About />
-    </Route>
-    <Route path="/:user">
-      <User />
-    </Route>
-    <Route>
-      <NoMatch />
-    </Route>
-  </Switch>
-);
-*/
-
-
-
-
+//component for the navigation bar
 function Nav() {
   return (<nav className="main-nav">
   <ul>
@@ -47,15 +17,8 @@ function Nav() {
 </nav>);
 }
 
-/*
-const ImageList = props => {
 
-  return 
-
-
-}*/
-
-
+//component for the not found message when no image results are found
 function NotFound() {
   return (<li className="not-found">
   <h3>No Results Found</h3>
@@ -70,6 +33,7 @@ function Photo(props) {
 }
 
 
+//component for the search form and button
 class Form extends React.Component {
 
 /*
@@ -78,33 +42,10 @@ class Form extends React.Component {
 
   constructor(props) {
     super(props);
-    this.searchRef = React.createRef();
-    this.aRef = React.createRef();
-    this.updateInputValue = React.createRef();
     this.state = {inputValue: ''};
   
-    
-    //this.state = {color: "red"};
   }
 
- 
-
-/*
-  updateInputValue => (evt) => {
-    this.setState({
-      inputValue: evt.target.value
-    });
-  }
-*/
-
-  
-  
-  componentDidMount(){
-    //this.aRef.href= '/search/' +  this.state.inputValue;
-
-
-  }
-  
 
   handleChange = (e) => {
         this.setState({
@@ -133,97 +74,45 @@ class Form extends React.Component {
   
 }
 
-/*
-render() {
-  return (<form className="search-form">
-  <input type="search" name="search" placeholder="Search" required/>
-  <button type="submit" className="search-button">
-    <svg fill="#fff" height="24" viewBox="0 0 23 23" width="24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-      <path d="M0 0h24v24H0z" fill="none"/>
-    </svg>
-  </button>
-</form>);
-*/
 
 
-class Button extends React.Component {
-
-  constructor(props) {
-    super(props);
-    //this.state = {isToggleOn: true};
-
-    // This binding is necessary to make `this` work in the callback
-    //this.handleClick = this.handleClick.bind(this);
-  }
-
-  handleClick() {
-    this.setState(state => ({
-      isToggleOn: !state.isToggleOn
-    }));
-  }
-
-  render() {
-    return (
-      <button onClick={this.handleClick}>
-        {this.state.isToggleOn ? 'ON' : 'OFF'}
-      </button>
-    );
-  }
-
-}
 
 
-/*class PhotoContainer extends React.Component {
-  constructor(props) {
-    super();
-    //this.state = {color: "red"};
-    const results = props.data;
-    let imgs = results.map(img =>
-      {
-        <Photo url={'https://www.flickr.com/photos/' + img.owner + '/' + img.id + '/'} />
-      }
-    );
-  }
-  render() {
-    return (<div class="photo-container">
-    <h2>Results</h2>
-    {images}
-    <ul><NotFound /></ul>
-    </div>);
-  }
-}*/
-//export default Nav;
-
-
+//component for the container of all of the photos
 const PhotoContainer = props => {
   const results = props.data;
-    let images = results.map(img =>
+
+  let images;
+
+  if (results.length )
+  {
+    images = results.map(img =>
       
         <Photo url={'https://farm' + img.farm + '.staticflickr.com/' + img.server + '/' + img.id + '_' + img.secret + '.jpg'} key={img.id} />
       
     );
+  }
+
+  else
+  {
+    images = <NotFound />
+  }
 
     return (
     <div className="photo-container">
     <h2>Results</h2>
-    <ul>{images}<NotFound /></ul>
+    <ul>{images}</ul>
     </div>
     );
 }
 
-/*
-function GuitarPhotoContainer()
-{
-  return (<PhotoContainer data={this.state.guitarImages} />);
-}
-*/
 
+//highest level component
 export default class App extends React.Component {
   constructor(){
     super();
-    this.state = { guitarImages: [], pianoImages: [], trumpetImages: [], searchImages: [] };
-
+    this.state = { guitarImages: [], pianoImages: [], trumpetImages: [], searchImages: []};
+  
   }
 
   componentDidMount(){
@@ -259,32 +148,11 @@ export default class App extends React.Component {
   }
   
   render() {
-    //console.log(this.state.pianoImages);
+    
     return (
-      /*<div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>*/
-
-      
-      
-
-        
+ 
       <BrowserRouter>
         <div className="container">
-
 
           <Form />
           <Nav />
@@ -315,33 +183,3 @@ export default class App extends React.Component {
     );
   }
 }
-
-
-/*
-
-<PhotoContainer data={this.state.guitarImages} />
-
-<BroswerRouter>
-<Switch>
-<Route exact path="/">
-  <Home />
-</Route>
-<Route path="/about">
-  <About />
-</Route>
-<Route path="/:user">
-  <User />
-</Route>
-<Route>
-  <NoMatch />
-</Route>
-</Switch>
-</BroswerRouter>
-*/
-
-
-//export default App;
-
-
-
-//export default App;
