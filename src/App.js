@@ -1,8 +1,7 @@
 import React from 'react';
 import './App.css';
-import ReactDOM from 'react-dom';
-import {Router, Route} from 'react-router';
-import {BrowserRouter, Switch} from 'react-router-dom';
+import { Route } from 'react-router';
+import {BrowserRouter, Switch, Link} from 'react-router-dom';
 import apiKey from './config';
 
 
@@ -10,22 +9,39 @@ import apiKey from './config';
 function Nav() {
   return (<nav className="main-nav">
   <ul>
-    <li><a href='/guitar'>Guitar</a></li>
-    <li><a href='/piano'>Piano</a></li>
-    <li><a href='/trumpet'>Trumpet</a></li>
+    <li><Link to='/guitar'>Guitar</Link></li>
+    <li><Link to='/piano'>Piano</Link></li>
+    <li><Link to='/trumpet'>Trumpet</Link></li>
   </ul>
 </nav>);
 }
 
 
 //component for the not found message when no image results are found
-function NotFound() {
+function NoResults() {
   return (<li className="not-found">
   <h3>No Results Found</h3>
   <p>You search did not return any results. Please try again.</p>
 </li>);
 }
 
+
+//component for the "Loading..." message while waiting for photo request to complete
+function Loading() {
+  return (<li className="not-found">
+  <h3>Loading...</h3>
+</li>);
+}
+
+
+//component for the not found message when no image results are found
+function NotFound() {
+  return (<div className="photo-container">
+  <h2>Page not found!</h2>
+  </div>);
+}
+
+//component for an individual photo
 function Photo(props) {
   return (<li>
   <img src={props.url} alt="" />
@@ -82,20 +98,26 @@ class Form extends React.Component {
 const PhotoContainer = props => {
   const results = props.data;
 
-  let images;
+  let images = null;
 
-  if (results.length )
+  if (props.isLoading)
   {
+    images = <Loading />;
+  }
+
+  else if (results.length )
+  {
+
     images = results.map(img =>
       
         <Photo url={'https://farm' + img.farm + '.staticflickr.com/' + img.server + '/' + img.id + '_' + img.secret + '.jpg'} key={img.id} />
       
     );
   }
-
+  
   else
   {
-    images = <NotFound />
+    images = <NoResults />;
   }
 
     return (
@@ -108,11 +130,19 @@ const PhotoContainer = props => {
 
 
 //highest level component
-export default class App extends React.Component {
+export default class App extends React.PureComponent {
   constructor(){
     super();
-    this.state = { guitarImages: [], pianoImages: [], trumpetImages: [], searchImages: []};
-  
+    this.state = { 
+      guitarImages: [],
+      pianoImages: [],
+      trumpetImages: [],
+      searchImages: [],
+      guitarLoading: true,
+      pianoLoading: true,
+      trumpetLoading: true,
+      searchLoading: true
+    };
   }
 
   componentDidMount(){
@@ -120,6 +150,7 @@ export default class App extends React.Component {
     .then(response => response.json())
     .then(responseData => {
       this.setState({guitarImages: responseData.photos.photo});
+      this.setState({guitarLoading: false});
     })
     .catch(error => {
       console.log('Error fetching and parsing data', error);
@@ -129,6 +160,7 @@ export default class App extends React.Component {
     .then(response2 => response2.json())
     .then(responseData2 => {
       this.setState({pianoImages: responseData2.photos.photo});
+      this.setState({pianoLoading: false});
     })
     .catch(error => {
       console.log('Error fetching and parsing data', error);
@@ -138,6 +170,7 @@ export default class App extends React.Component {
     .then(response3 => response3.json())
     .then(responseData3 => {
       this.setState({trumpetImages: responseData3.photos.photo});
+      this.setState({trumpetLoading: false});
     })
     .catch(error => {
       console.log('Error fetching and parsing data', error);
@@ -158,25 +191,28 @@ export default class App extends React.Component {
           <Nav />
        
         <Switch>
-          <Route path="/guitar" render={(props) => <PhotoContainer {...props} data={this.state.guitarImages} />} />
-          <Route path="/piano" render={(props) => <PhotoContainer {...props} data={this.state.pianoImages} />} />
-          <Route path="/trumpet" render={(props) => <PhotoContainer {...props} data={this.state.trumpetImages} />} />
+          <Route exact path="/" />
+          <Route path="/guitar" render={(props) => <PhotoContainer {...props} data={this.state.guitarImages} isLoading={this.state.guitarLoading}/>} />
+          <Route path="/piano" render={(props) => <PhotoContainer {...props} data={this.state.pianoImages} isLoading={this.state.pianoLoading}/>} />
+          <Route path="/trumpet" render={(props) => <PhotoContainer {...props} data={this.state.trumpetImages} isLoading={this.state.trumpetLoading}/>} />
           <Route path="/search/:term" render={(props) => 
               {
                 fetch('https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=' + apiKey + '&tags=' + props.match.params.term +'&sort=relevance&safe_search=1&is_getty=true&per_page=24&format=json&nojsoncallback=1')
                   .then(response4 => response4.json())
                   .then(responseData4 => {
                     this.setState({searchImages: responseData4.photos.photo});
+                    this.setState({searchLoading: false});
                     })
                   .catch(error => {
                     console.log('Error fetching and parsing data', error);
                     });
 
-                return <PhotoContainer {...props} data={this.state.searchImages} />;
+                return <PhotoContainer {...props} data={this.state.searchImages} isLoading={this.state.searchLoading}/>;
               }
             } 
            />
-          
+
+          <Route component={NotFound} />
         </Switch>
         </div>
       </BrowserRouter>
