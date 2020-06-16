@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { Route } from 'react-router';
+import { Route, withRouter } from 'react-router';
 import {BrowserRouter, Switch} from 'react-router-dom';
 import apiKey from './config';
 import Nav from './Nav';

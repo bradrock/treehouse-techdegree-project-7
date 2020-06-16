@@ -1,4 +1,5 @@
 import React from 'react';
+import {withRouter} from 'react-router-dom'
 
 //component for the search form and button
 class Form extends React.Component {
@@ -10,7 +11,7 @@ class Form extends React.Component {
       constructor(props) {
         super(props);
         this.state = {inputValue: ''};
-      
+        this.onSubmit = this.onSubmit.bind(this);
       }
     
     
@@ -22,7 +23,8 @@ class Form extends React.Component {
         
       onSubmit = (e) => {
            e.preventDefault();
-           window.location.href = "/search/" + this.state.inputValue;
+           let path = "/search/" + this.state.inputValue;
+           this.props.history.push(path);
         }
     
     
@@ -41,4 +43,4 @@ class Form extends React.Component {
       
 }
 
-export default Form;
+export default withRouter(Form);
